@@ -1,0 +1,13 @@
+Features to Add:
+- Ability to compare two files and visually display the difference
+- Ability to compare several revisions against one master, and output statistics at the end
+
+Command Line Argument Format:
+- Two Arguments:
+    Argument 1 is the original file
+    Argument 2 is the revised file
+        Revised file can contain 1 or many dictations
+- Three Arguments:
+    Same as above, with optional third argument "out"
+    Assumes revised file contains only a single dictation
+    Outputs visual diff as HTML
