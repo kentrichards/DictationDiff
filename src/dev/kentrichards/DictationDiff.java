@@ -16,21 +16,26 @@ public class DictationDiff {
 
     public static void main(String[] args) {
         if (args.length != 2 && args.length != 3) {
-            // error
+            System.out.println("Invalid arguments. Closing..");
             System.exit(1);
         }
 
-        ArrayList<String> original = readFile(args[0]),
-                          revision = readFile(args[1]);
+        try {
+            ArrayList<String> original = readFile(args[0]),
+                              dictations = readFile(args[1]);
 
-        String version;
-        if (args.length == 3) {
-            version = args[2];
-        } else {
-            version = "No version specified.";
+            String version;
+            if (args.length == 3) {
+                version = args[2];
+            } else {
+                version = "No version specified.";
+            }
+
+            createVisualDiff(original.get(0), dictations, version);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found. Closing..");
+            System.exit(1);
         }
-
-        createVisualDiff(original.get(0), revision, version);
     }
 
     private static void createVisualDiff(String original, ArrayList<String> revisions, String version) {
@@ -74,7 +79,7 @@ public class DictationDiff {
         }
     }
 
-    private static ArrayList<String> readFile(String file) {
+    private static ArrayList<String> readFile(String file) throws FileNotFoundException{
         // Automatically closes Scanner
         try (Scanner in = new Scanner(new FileReader("dictations/input/" + file))) {
             ArrayList<String> out = new ArrayList<>();
@@ -86,10 +91,6 @@ public class DictationDiff {
                 }
             }
             return out;
-        } catch (FileNotFoundException e) {
-            // temp
-            System.exit(1);
-            return new ArrayList<String>();
         }
     }
 }
