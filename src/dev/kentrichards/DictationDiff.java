@@ -23,8 +23,7 @@ public class DictationDiff {
         }
 
         try {
-            ArrayList<String> original = readFile(args[0]),
-                              dictations = readFile(args[1]);
+            ArrayList<String> original = readFile(args[0]), dictations = readFile(args[1]);
 
             String version;
             if (args.length == 3) {
@@ -34,12 +33,21 @@ public class DictationDiff {
             }
 
             createVisualDiff(original.get(0), dictations, version);
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found. Input files should be located in \"/dictations/input/\"\nClosing..");
             System.exit(2);
         }
     }
 
+    /**
+     * Outputs a visual diff between the contents of original and each index of dictations. Uses Google's
+     * diff-match-patch library to calculate the diff. Outputs as HTML file, that is opened automatically.
+     *
+     * @param original String containing human transcript of some audio file
+     * @param dictations Talkatoo generated dictations of the same audio file
+     * @param version optional Talkatoo version, given as a command line argument
+     */
     private static void createVisualDiff(String original, ArrayList<String> dictations, String version) {
         diff_match_patch dmp = new diff_match_patch();
         String timeStamp = getTime();
@@ -47,6 +55,7 @@ public class DictationDiff {
 
         LinkedList<diff_match_patch.Diff> diff;
         try (PrintWriter writer = new PrintWriter("dictations/output/" + fileName, StandardCharsets.UTF_8)) {
+            // Output current time, Talkatoo version, and the original text at the top of the HTML file
             writer.println("<b>" + timeStamp + "</b><br>Talkatoo Version: " + version + "<br><br>");
             writer.println("<b>ORIGINAL FILE:</b><br>" + original + "<br><br>");
 
@@ -80,12 +89,21 @@ public class DictationDiff {
             // Open HTML file containing visual diffs
             File htmlFile = new File("dictations/output/" + fileName);
             Desktop.getDesktop().browse(htmlFile.toURI());
+
         } catch (IOException e) {
             System.out.println("Unable to create output file. Ensure \"/dictations/output\" folder exists.\nClosing..");
             System.exit(3);
         }
     }
 
+    /**
+     * Reads a text file line by line, storing each nonempty line as a String in an ArrayList that is returned.
+     *
+     * @param file text file containing either a single human transcription of an audio file,
+     *             or a text file containing one or many Talkatoo dictations of the same audio file
+     * @return ArrayList containing the files contents, each line of the file is stored in it's own array index
+     * @throws FileNotFoundException thrown if the given file does not exist in '/dictations/input/' or that directory does not exist
+     */
     private static ArrayList<String> readFile(String file) throws FileNotFoundException {
         // Automatically closes Scanner
         try (Scanner in = new Scanner(new FileReader("dictations/input/" + file))) {
@@ -105,6 +123,13 @@ public class DictationDiff {
         }
     }
 
+    /**
+     * Creates a unique file name for the output of a visual diff.
+     *
+     * @param timeStamp current local time in YYYY/MM/DD HH:MM:SS format
+     * @param version current app version if specified, "Not specified." otherwise
+     * @return unique file name with format "version timeStamp.html" or just "timeStamp.html"
+     */
     private static String createFileName(String timeStamp, String version) {
         String fileName = timeStamp.replaceAll("[/ :]", ".") + ".html";
 
@@ -115,6 +140,11 @@ public class DictationDiff {
         return fileName;
     }
 
+    /**
+     * Returns the current local time as as formatted String.
+     *
+     * @return current time in Halifax, Nova Scotia
+     */
     private static String getTime() {
         return ZonedDateTime.now(
                 ZoneId.of("Canada/Atlantic"))
