@@ -53,13 +53,17 @@ public class DictationDiff {
         String timeStamp = getTime();
         String fileName = createFileName(timeStamp, version);
 
+        int totalWords = countWords(original);
+
         LinkedList<diff_match_patch.Diff> diff;
         try (PrintWriter writer = new PrintWriter("dictations/output/" + fileName, StandardCharsets.UTF_8)) {
-            // Output current time, Talkatoo version, and the original text at the top of the HTML file
-            writer.println("<b>" + timeStamp + "</b><br>Talkatoo Version: " + version + "<br><br>");
-            writer.println("<b>ORIGINAL FILE:</b><br>" + original + "<br><br>");
+            // Output current time, Talkatoo version, accuracy formula and the original text at the top of the file
+            writer.println("<b>" + timeStamp + "</b><br>Talkatoo Version: " + version +
+                    "<br>Accuracy = (total words - errors) / (total words)<br><br>");
+            writer.println("<b>ORIGINAL FILE (" + totalWords + " Words):</b><br>" + original + "<br><br>");
 
             int index = 1, numInserts = 0, numDeletes = 0;
+            double accuracy = 0.0;
             for (String dictation : dictations) {
                 diff = dmp.diff_main(original, dictation);
 
@@ -78,8 +82,12 @@ public class DictationDiff {
                     }
                 }
 
+                // Calculate diff accuracy to two decimal places
+                accuracy = ((double) totalWords - (numInserts + numDeletes)) / (double) totalWords * 100.0;
+                accuracy = Math.round(accuracy * 100.0) / 100.0;
+
                 // Output visual diff
-                writer.println("<b>DICTATION " + index + " DIFF (Insertions: " + numInserts + ", Deletions: " + numDeletes + "):</b><br>");
+                writer.println("<b>DICTATION " + index + " DIFF (Insertions: " + numInserts + ", Deletions: " + numDeletes + ", Accuracy: " + accuracy + "%):</b><br>");
                 writer.println(dmp.diff_prettyHtml(diff) + "<br><br>");
 
                 numInserts = numDeletes = 0;
@@ -115,7 +123,8 @@ public class DictationDiff {
 
                 // Only add lines that aren't empty
                 if (temp.length() > 0) {
-                    out.add(temp.toLowerCase());
+                    // Not worried about inconsistent capitalization or trailing spaces
+                    out.add(temp.toLowerCase().trim());
                 }
             }
 
@@ -149,5 +158,14 @@ public class DictationDiff {
         return ZonedDateTime.now(
                 ZoneId.of("Canada/Atlantic"))
                 .format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+    }
+
+    private static int countWords(String text) {
+        if (text.isEmpty()) {
+            return 0;
+        }
+
+        // Splits on any whitespace
+        return text.split("\\s+").length;
     }
 }
