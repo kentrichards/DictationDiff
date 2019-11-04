@@ -17,7 +17,7 @@ public class DictationDiff {
     public static void main(String[] args) {
         if (args.length != 2 && args.length != 3) {
             System.out.println("Invalid arguments. Expected format:\n\t" +
-                    "DictationDiff <originalFile.txt> <dictationsFile.txt> <talkatooVersion> (optional)\n" +
+                    "DictationDiff <transcript.txt> <dictations.txt> <version (optional)>\n" +
                     "Closing..");
             System.exit(1);
         }

@@ -5,4 +5,4 @@
 - Place the files you want to compare in "input" (e.g., the human transcript of an audio file, and the dictations of that same audio file).
 - Open the Windows Command Prompt and navigate to the folder containing the Jar and the folders you just created.
 - In CMD type in "java -jar DictationDiff.jar <transcript.txt> <dictations.txt> <version (optional)>"
-- If no errors occur, the HTML file containing the visual diff will automatically open. If an error occurs it will be displayed in the Command Prompt.
+- If no errors occur, the HTML file containing the visual diff will automatically open. If an error occurs it will be displayed in the Command Prompt window.
