@@ -41,7 +41,7 @@ public class DictationDiff {
     }
 
     /**
-     * Outputs a visual diff between the contents of original and each index of dictations. Uses Google's
+     * Outputs a visual diff between the contents of original and each index of ArrayList dictations. Uses Google's
      * diff-match-patch library to calculate the diff. Outputs as HTML file, that is opened automatically.
      *
      * @param original String containing human transcript of some audio file
