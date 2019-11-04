@@ -44,9 +44,9 @@ public class DictationDiff {
      * Outputs a visual diff between the contents of original and each index of ArrayList dictations. Uses Google's
      * diff-match-patch library to calculate the diff. Outputs as HTML file, that is opened automatically.
      *
-     * @param original String containing human transcript of some audio file
+     * @param original   String containing human transcript of some audio file
      * @param dictations Talkatoo generated dictations of the same audio file
-     * @param version optional Talkatoo version, given as a command line argument
+     * @param version    optional Talkatoo version, given as a command line argument
      */
     private static void createVisualDiff(String original, ArrayList<String> dictations, String version) {
         diff_match_patch dmp = new diff_match_patch();
@@ -63,7 +63,7 @@ public class DictationDiff {
             writer.println("<b>ORIGINAL FILE (" + totalWords + " Words):</b><br>" + original + "<br><br>");
 
             int index = 1, numInserts = 0, numDeletes = 0;
-            double accuracy = 0.0;
+            double accuracy;
             for (String dictation : dictations) {
                 diff = dmp.diff_main(original, dictation);
 
@@ -87,7 +87,8 @@ public class DictationDiff {
                 accuracy = Math.round(accuracy * 100.0) / 100.0;
 
                 // Output visual diff
-                writer.println("<b>DICTATION " + index + " DIFF (Insertions: " + numInserts + ", Deletions: " + numDeletes + ", Accuracy: " + accuracy + "%):</b><br>");
+                writer.println("<b>DICTATION " + index + " DIFF (Insertions: " + numInserts +
+                        ", Deletions: " + numDeletes + ", Accuracy: " + accuracy + "%):</b><br>");
                 writer.println(dmp.diff_prettyHtml(diff) + "<br><br>");
 
                 numInserts = numDeletes = 0;
@@ -136,7 +137,7 @@ public class DictationDiff {
      * Creates a unique file name for the output of a visual diff.
      *
      * @param timeStamp current local time in YYYY/MM/DD HH:MM:SS format
-     * @param version current app version if specified, "Not specified." otherwise
+     * @param version   current app version if specified, "Not specified." otherwise
      * @return unique file name with format "version timeStamp.html" or just "timeStamp.html"
      */
     private static String createFileName(String timeStamp, String version) {
@@ -160,6 +161,12 @@ public class DictationDiff {
                 .format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
     }
 
+    /**
+     * Counts the number of words in a String.
+     *
+     * @param text String containing a dictation or human transcription of an audio file
+     * @return number of words in the given String
+     */
     private static int countWords(String text) {
         if (text.isEmpty()) {
             return 0;
